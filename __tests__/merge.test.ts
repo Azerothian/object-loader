@@ -12,7 +12,7 @@ describe("merge", () => {
     vol.reset();
   });
   test("merging two objects together", async () => {
-    await fs.writeFile("/test.json", `{"test2": {"mergeRef": "./test2.json", "key1": "key1" }}`);
+    await fs.writeFile("/test.json", `{"test2": {"$mergeRef": "./test2.json", "key1": "key1" }}`);
     await fs.writeFile("/test2.json",  `{ "name": "howdy" }`);
     const data = await importData("/test.json");
     expect(data).toEqual({
@@ -24,7 +24,7 @@ describe("merge", () => {
   });
   test("merging two arrays together", async () => {
     await fs.writeFile("/test.yaml", `
- - mergeArrayRef: ./test2.yaml
+ - $mergeArrayRef: ./test2.yaml
  - key1: key1`);
     await fs.writeFile("/test2.yaml",  `
  - key2: key2`);

@@ -1,3 +1,3 @@
 export default {
-  ref: "./test2.ts"
+  $ref: "./test1-import.ts"
 }

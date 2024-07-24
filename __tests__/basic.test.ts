@@ -11,8 +11,8 @@ describe("basic", () => {
   beforeEach(() => {
     vol.reset();
   });
-  test("basic ref loading - json", async () => {
-    await fs.writeFile("/test.json", `{"test2": {"ref": "./test2.json"}}`);
+  test("basic $ref loading - json", async () => {
+    await fs.writeFile("/test.json", `{"test2": {"$ref": "./test2.json"}}`);
     await fs.writeFile("/test2.json",  `{ "name": "howdy" }`);
     const data = await importData("/test.json");
     expect(data).toEqual({
@@ -21,10 +21,10 @@ describe("basic", () => {
       },
     });
   });
-  test("basic ref loading - yaml", async () => {
+  test("basic $ref loading - yaml", async () => {
     await fs.writeFile("/test.yaml", `
 test2:
-  ref: "./test2.yaml"
+  $ref: "./test2.yaml"
 `);    
     await fs.writeFile("/test2.yaml",  `
 name: howdy
@@ -36,10 +36,10 @@ name: howdy
       },
     });
   });
-  test("basic ref loading - yaml - json", async () => {
+  test("basic $ref loading - yaml - json", async () => {
     await fs.writeFile("/test.yaml", `
 test2:
-  ref: "./test2.json"
+  $ref: "./test2.json"
 `);    
     await fs.writeFile("/test2.json",  `{ "name": "howdy" }`);
     const data = await importData("/test.yaml");
@@ -49,13 +49,13 @@ test2:
       },
     });
   });
-  test("relative path ref loading", async () => {
+  test("relative path $ref loading", async () => {
     await fs.mkdir("/folder/inner/", {recursive: true});
     await fs.writeFile("/root.yaml", `
-ref: ./folder/inner/test.yaml`);
+$ref: ./folder/inner/test.yaml`);
     await fs.writeFile("/folder/inner/test.yaml", `
 test2:
-  ref: "../test2.yaml"
+  $ref: "../test2.yaml"
 `);    
     await fs.writeFile("/folder/test2.yaml",  `
 name: howdy
@@ -67,10 +67,10 @@ name: howdy
       },
     });
   });
-  test("ref array in array", async () => {
+  test("$ref array in array", async () => {
     await fs.writeFile("/test.yaml", `
 test2:
-  - ref: "./test2.yaml"
+  - $ref: "./test2.yaml"
 `);    
     await fs.writeFile("/test2.yaml",  `
  - name: howdy`);

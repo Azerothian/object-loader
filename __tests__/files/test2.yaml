@@ -1,0 +1,4 @@
+$ref: ./test2-import.ts
+$args:
+  - Hi
+  - Hello
