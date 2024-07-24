@@ -130,3 +130,4 @@ dist
 .pnp.*
 .yalc
 yalc.lock
+lib/

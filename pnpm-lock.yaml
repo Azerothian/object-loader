@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@vostro/object-visit':
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.1.0
+        version: 1.1.0
       yaml:
         specifier: ^2.4.5
         version: 2.4.5
@@ -386,8 +386,8 @@ packages:
   '@types/yargs@17.0.32':
     resolution: {integrity: sha512-xQ67Yc/laOG5uMfX/093MRlGGCIBzZMarVa+gfNKJxWAIgykYpVGkBdbqEzGDDfCrVUj6Hiff4mTZ5BA6TmAog==}
 
-  '@vostro/object-visit@1.0.1':
-    resolution: {integrity: sha512-0rEtrHXfpdTvDNV2m1G1vEQWIuFoAAb9LleoM1DWOdVkwYb6PKZG8EwwH06jvfWZni7NJqKQp9mhsGIvPOSs/g==}
+  '@vostro/object-visit@1.1.0':
+    resolution: {integrity: sha512-PoRnLnokaqADO1mUpGCwTjruJbTW+ameXCOPPylPqGfLIgLGJe33MFWYVnaq4y9vxQuSJVPleA4wuGordmBWIw==}
 
   ansi-escapes@4.3.2:
     resolution: {integrity: sha512-gKXj5ALrKWQLsYG9jlTRmR/xKluxHV+Z9QEwNIgCfM1/uwPMCuzVVnh5mwTd+OuBZcwSIMbqssNWRm1lE51QaQ==}
@@ -1778,7 +1778,7 @@ snapshots:
     dependencies:
       '@types/yargs-parser': 21.0.3
 
-  '@vostro/object-visit@1.0.1': {}
+  '@vostro/object-visit@1.1.0': {}
 
   ansi-escapes@4.3.2:
     dependencies:
