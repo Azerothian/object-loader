@@ -28,6 +28,18 @@ async function processNode(node: any, cwd: string, options: FileMapOptions) {
     delete mergedObj[options.mergeKey ?? "$mergeRef"];
     return mergedObj;
   }
+  if (options.customKeys) {
+    const keys = Object.keys(options.customKeys).filter((key) => node[key]);
+    if (keys.length > 0) {
+      for(const key of keys) {
+        const result = await options.customKeys[key](node, cwd, options, key);
+        if (!result) {
+          return node;
+        }
+        return result;
+      }
+    }
+  }
   return node;
 }
 
@@ -76,7 +88,7 @@ export async function importFile<T>(
   if(options?.resolver?.[ext]) {
     return options?.resolver[ext](filePath, options, cwd, node);
   }
-  return fs.readFile(filePath);
+  return fs.readFile(filePath, node[options?.encodingKey ?? "$encoding"] ?? undefined);
 }
 
 
@@ -85,8 +97,14 @@ export type FileMapOptions = {
   mergeKey?: string | undefined;
   mergeArrayKey?: string | undefined;
   argsKey?: string | undefined;
+  exportKey?: string | undefined;
+  encodingKey?: string | undefined;
   resolver?: {
     [extension: string]: (filePath: string, options: FileMapOptions | undefined, cwd: string, node: any ) => Promise<any>;
+  }
+  customKeys?: {
+    [key: string]: ((node: any, cwd?: string, options?: FileMapOptions, keyName?: string) => Promise<any>) |
+      ((node: any, cwd?: string, options?: FileMapOptions, keyName?: string) => any);
   }
 };
 
@@ -94,27 +112,34 @@ export type FileMapOptions = {
 async function importJSTSFile(filePath: string, options: FileMapOptions | undefined, cwd: string, node: any) {
   const file = await import(filePath);
   let result: any = file;
+  if (file && node?.[options?.exportKey ?? "$export"]) {
+    if(file[node[options?.exportKey ?? "$export"]]) {
+      return file[node[options?.exportKey ?? "$export"]];
+    }
+  }
+
+
   if (typeof file === "function") {
     if (node?.[options?.argsKey ?? "$args"]) {
-      result = await file.apply(undefined, [...node[options?.argsKey ?? "$args"], cwd, options]);
+      return await file.apply(undefined, [...node[options?.argsKey ?? "$args"], cwd, options]);
     } else {
-      result = await file(cwd, options);
+      return await file(cwd, options);
     }
   }
   if (file?.default && typeof file.default === "function") {
     if (node?.[options?.argsKey ?? "$args"]) {
-      result = await file.default.apply(undefined, [...node[options?.argsKey ?? "$args"], cwd, options]);
+      return await file.default.apply(undefined, [...node[options?.argsKey ?? "$args"], cwd, options]);
     } else {
-      result = await file.default(options);
+      return await file.default(options);
     }
   }
   if (file?.default && typeof file.default === "object") {
-    result = file.default;
+    return file.default;
   }
   return result;
 }
 
-export async function objectLoader(target: string, cwd = process.cwd(), options?: FileMapOptions): Promise<any> {
+export async function objectLoader<T>(target: string, cwd = process.cwd(), options?: FileMapOptions): Promise<T> {
   
   const opts: FileMapOptions = {
     fieldKey: '$ref',
@@ -130,6 +155,8 @@ export async function objectLoader(target: string, cwd = process.cwd(), options?
       ...options?.resolver || {} ,
     },
   };
-  return processObject(target, cwd, opts);
+  return processObject(target, cwd, opts) as Promise<T>;
   
 }
+
+export default objectLoader;
