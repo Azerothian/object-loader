@@ -5,6 +5,8 @@ import fs from 'fs/promises';
 import waterfall from "./waterfall";
 
 
+export const IGNORE: unknown = Object.freeze({});
+
 async function processNode(node: any, cwd: string, options: FileMapOptions) {
   const refField = node?.[options.fieldKey ?? "$ref"] || node?.[options.mergeArrayKey ?? "$mergeArrayRef"];
   const mergeRefField = node?.[options.mergeKey ?? "$mergeRef"];
@@ -28,12 +30,12 @@ async function processNode(node: any, cwd: string, options: FileMapOptions) {
     delete mergedObj[options.mergeKey ?? "$mergeRef"];
     return mergedObj;
   }
-  if (options.customKeys) {
+  if (options?.customKeys) {
     const keys = Object.keys(options.customKeys).filter((key) => node[key]);
     if (keys.length > 0) {
       for(const key of keys) {
         const result = await options.customKeys[key](node, cwd, options, key);
-        if (!result) {
+        if (result === IGNORE) {
           return node;
         }
         return result;
